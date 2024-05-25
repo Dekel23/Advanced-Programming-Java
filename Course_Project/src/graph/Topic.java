@@ -9,28 +9,31 @@ public class Topic {
     private List<Agent> subs = new ArrayList<>();
     private List<Agent> pubs = new ArrayList<>();
     
-    Topic(String name){
+    Topic(String name) {
         this.name=name;
     }
 
-    public void subscribe(Agent a){
+    public List<Agent> getSubs() {return this.subs;}
+    public List<Agent> getPubs() {return this.pubs;}
+
+    public void subscribe(Agent a) {
     	this.subs.add(a);
     }
     
-    public void unsubscribe(Agent a){
+    public void unsubscribe(Agent a) {
     	this.subs.remove(a);
     }
 
-    public void publish(Message m){
+    public void publish(Message m) {
     	for (Agent sub: this.subs)
     		sub.callback(name, m);
     }
 
-    public void addPublisher(Agent a){
+    public void addPublisher(Agent a) {
     	this.pubs.add(a);
     }
 
-    public void removePublisher(Agent a){
-    	this.pubs.add(a);
+    public void removePublisher(Agent a) {
+    	this.pubs.remove(a);
     }
 }

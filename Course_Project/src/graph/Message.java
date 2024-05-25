@@ -10,7 +10,7 @@ public class Message {
     public final Date date;
 
 
-    public Message(String asText){
+    public Message(String asText) {
         this.asText = asText;
         this.data = this.asText.getBytes();
         double temp = Double.NaN;
@@ -21,11 +21,11 @@ public class Message {
         this.date = new Date();
     }
 
-    public Message(byte[] data){
+    public Message(byte[] data) {
         this(new String(data));
     }
 
-    public Message(double asDouble){
+    public Message(double asDouble) {
         this(String.valueOf(asDouble));
     }
 }
