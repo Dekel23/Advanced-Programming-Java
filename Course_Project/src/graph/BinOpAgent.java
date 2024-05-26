@@ -22,6 +22,7 @@ public class BinOpAgent implements Agent{
         this.num2 = Double.NaN;
         TopicManagerSingleton.get().getTopic(this.input1).subscribe(this);
         TopicManagerSingleton.get().getTopic(this.input2).subscribe(this);
+        TopicManagerSingleton.get().getTopic(this.output).addPublisher(this);
     }
 
     @Override
