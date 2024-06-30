@@ -1,14 +1,12 @@
 package config;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import graph.Agent;
 import graph.Topic;
 import graph.TopicManagerSingleton;
-import graph.TopicManagerSingleton.TopicManager;
 
 public class Graph extends ArrayList<Node>{
     

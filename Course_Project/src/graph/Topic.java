@@ -26,7 +26,7 @@ public class Topic {
 
     public void publish(Message m) {
     	for (Agent sub: this.subs)
-    		sub.callback(name, m);
+    		sub.callback(this.name, m);
     }
 
     public void addPublisher(Agent a) {

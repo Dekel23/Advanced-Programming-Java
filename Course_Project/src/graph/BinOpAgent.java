@@ -39,16 +39,16 @@ public class BinOpAgent implements Agent{
         double num = msg.asDouble;
         if (Double.isNaN(num))
             return;
-        if (topic.equals(this.input1)) {
+
+        if (topic.equals(this.input1))
             num1 = num;
-            if (Double.isNaN(this.num2))
-                return;
-        }
-        else if (topic.equals(this.input2)) {
+
+        if (topic.equals(this.input2))
             num2 = num;
-            if (Double.isNaN(this.num1))
-                return;
-        }
+
+        if (Double.isNaN(this.num1) || Double.isNaN(this.num2))
+            return;
+
         TopicManagerSingleton.get().getTopic(this.output).publish(new Message(this.op.apply(this.num1, this.num2)));
     }
 
