@@ -29,6 +29,7 @@ public class GenericConfig implements Config {
         try {
             lines = Files.readAllLines(Paths.get(this.file));
         } catch(Exception e) {
+            e.printStackTrace();
             System.out.println("Can't read file " + this.file + " in config " + this.getName());
             return;
         }

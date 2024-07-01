@@ -1,4 +1,4 @@
-package config;
+package configs;
 
 import graph.Agent;
 import graph.TopicManagerSingleton;
