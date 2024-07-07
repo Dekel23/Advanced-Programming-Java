@@ -1,7 +1,5 @@
 package server;
 
-import servlets.Servlet;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import server.RequestParser.RequestInfo;
+import servlets.Servlet;
 
 public class MyHTTPServer extends Thread implements HTTPServer {
     private final int port;
@@ -119,7 +118,7 @@ public class MyHTTPServer extends Thread implements HTTPServer {
                 String response = "HTTP/1.1 404 Not Found\r\n\r\n";
                 out.write(response.getBytes());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

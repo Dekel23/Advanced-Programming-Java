@@ -71,19 +71,32 @@ public class MainTrain {
 
     public static void testServer() throws Exception {
         // Create and start the server
-        int port = 8080;
+        int port = 8880;
         int maxThreads = 10;
         MyHTTPServer server = new MyHTTPServer(port, maxThreads);
 
-        server.addServlet("GET", "/hello", (requestInfo, outputStream) -> {
-            String response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello, World!";
-            outputStream.write(response.getBytes());
+        // Add test servlets using anonymous classes
+        server.addServlet("GET", "/hello", new Servlet() {
+            @Override
+            public void handle(RequestInfo ri, OutputStream toClient) throws IOException {
+                String response = "HTTP/1.1 200 OK\nContent-Type: text/plain\n\nHello, World!";
+                toClient.write(response.getBytes());
+            }
+
+            @Override
+            public void close() throws IOException {}
         });
         
-        server.addServlet("POST", "/echo", (requestInfo, outputStream) -> {
-            String content = new String(requestInfo.getContent());
-            String response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n" + content;
-            outputStream.write(response.getBytes());
+        server.addServlet("POST", "/echo", new Servlet() {
+            @Override
+            public void handle(RequestInfo ri, OutputStream toClient) throws IOException {
+                String content = new String(ri.getContent());
+                String response = "HTTP/1.1 200 OK\nContent-Type: text/plain\n\n" + content;
+                toClient.write(response.getBytes());
+            }
+
+            @Override
+            public void close() throws IOException {}
         });
         
         server.start();
@@ -116,13 +129,14 @@ public class MainTrain {
     }
 
     private static String sendRequest(String method, String path, String body) throws Exception {
-        String request = method + " " + path + " HTTP/1.1\r\n" +
-                        "Host: localhost:8080\r\n" +
-                        "Content-Length: " + body.length() + "\r\n" +
-                        "\r\n" +
-                        body;
+        String request = method + " " + path + " HTTP/1.1\n" +
+                            "Host: localhost:8080\n" +
+                            "Content-Length: " + body.length() + "\n" +
+                            "\n" +
+                            body +
+                            "\n";
         
-        try (Socket socket = new Socket("localhost", 8080);
+        try (Socket socket = new Socket("localhost", 8880);
             OutputStream out = socket.getOutputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             

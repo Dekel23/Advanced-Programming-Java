@@ -46,7 +46,7 @@ public class RequestParser {
 
         while ((line = reader.readLine()) != null && !line.isEmpty()) {}
 
-        while ((line = reader.readLine()) != null && !line.isEmpty()) {
+        while ((line = reader.readLine()) != null && !line.isEmpty() && line.contains("=")) {
             String[] keyValue = line.split("=");
             if (keyValue.length != 2)
                 throw new IllegalArgumentException("Invalid HTTP parameter" + line);
@@ -54,7 +54,7 @@ public class RequestParser {
         }
 
         StringBuilder bodyBuilder = new StringBuilder();
-        while ((line = reader.readLine()) != null && !line.isEmpty()) {
+        while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty()) {
             bodyBuilder.append(line);
         }
         bodyBuilder.append((char)'\n');
