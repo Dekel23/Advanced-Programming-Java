@@ -1,8 +1,4 @@
-package configs;
-
-import graph.Agent;
-import graph.TopicManagerSingleton;
-import graph.Message;
+package graph;
 
 public class IncAgent implements Agent {
 
