@@ -43,21 +43,29 @@ public class RequestParser {
         else{
             uriSegments = httpURI.substring(1).split("/");
         }
+        
+        while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty()) {}
+        while (reader.ready() && (line = reader.readLine()) != null && !line.contains("------")) {}
 
-        while ((line = reader.readLine()) != null && !line.isEmpty()) {}
-
-        while ((line = reader.readLine()) != null && !line.isEmpty() && line.contains("=")) {
+        while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty() && line.contains("=")) {
+            if (line.contains(" filename=")) {
+                String[] params = line.split(" "); 
+                line = line.split(" ")[params.length - 1];
+            }
+                
             String[] keyValue = line.split("=");
             if (keyValue.length != 2)
                 throw new IllegalArgumentException("Invalid HTTP parameter" + line);
-            parameters.put(keyValue[0], keyValue[1]);
+            parameters.put(keyValue[0], keyValue[1].substring(1, keyValue[1].length() - 1));
         }
 
+        while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty()) {}
+
         StringBuilder bodyBuilder = new StringBuilder();
-        while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty()) {
-            bodyBuilder.append(line);
+        while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty() && !line.contains("------")) {
+            bodyBuilder.append(line + "\n");
         }
-        bodyBuilder.append((char)'\n');
+
         byte[] content = bodyBuilder.toString().getBytes();
 
         return new RequestInfo(httpMethod, httpURI, uriSegments, parameters, content);
