@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computational Graph</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/vis-network.min.js"></script>
+    <style type="text/css">
+        #mynetwork {
+            width: 100%;
+            height: 600px;
+            border: 1px solid lightgray;
+        }
+    </style>
+</head>
+<body>
+    <div id="mynetwork"></div>
+    <script type="text/javascript">
+        // This function will be called with the actual graph data
+        function createGraph(nodesData, edgesData) {
+            var nodes = new vis.DataSet(nodesData);
+            var edges = new vis.DataSet(edgesData);
+
+            var container = document.getElementById('mynetwork');
+            var data = {
+                nodes: nodes,
+                edges: edges
+            };
+            var options = {
+                nodes: {
+                    shape: 'box',
+                    font: {
+                        size: 16
+                    }
+                },
+                edges: {
+                    arrows: 'to'
+                },
+                physics: {
+                    enabled: true
+                }
+            };
+            var network = new vis.Network(container, data, options);
+        }
+
+        // This line will be replaced with actual data in Java
+        // createGraph({{NODES}}, {{EDGES}});
+    </script>
+</body>
+</html>
