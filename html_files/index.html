@@ -3,53 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Computational Graph Viewer</title>
+    <title>Graph and Form</title>
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            display: flex;
-        }
         iframe {
-            border: none;
-        }
-        #left-panel {
-            width: 20%;
-            height: 100%;
-        }
-        #center-panel {
-            width: 60%;
-            height: 100%;
-        }
-        #right-panel {
-            width: 20%;
-            height: 100%;
+            border: 1px solid #ddd;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
-    <iframe id="left-panel" src="form.html"></iframe>
-    <iframe id="center-panel" src="graph.html" style="width: 100%; height: 600px; border: none;" onLoad="alert('Test')"></iframe>
-    <iframe id="right-panel" src="temp.html"></iframe>
-    <!-- <script>
-        const iframe = document.getElementById('center-panel');
+    <h1>Graph and Form</h1>
+    
+    <h2>Form</h2>
+    <iframe id="formFrame" src="form.html" width="400" height="200"></iframe>
+    
+    <h2>Graph Visualization</h2>
+    <div id="errorLog" style="color: red;"></div>
+    <iframe id="graphFrame" src="about:blank" width="800" height="600"></iframe>
 
-        // Function to update the graph
-        function updateGraph(newGraphData) {
-            iframe.contentWindow.postMessage({
-                type: 'updateGraph',
-                graphData: newGraphData
-            }, '*');
-            window.location.reload()
+    <script>
+        function deployGraph() {
+            fetch('graph.html')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const frame = document.getElementById('graphFrame');
+                    frame.srcdoc = html;
+                    frame.onload = () => {
+                        console.log('Graph loaded successfully');
+                    };
+                })
+                .catch(error => {
+                    console.error('Error loading graph:', error);
+                    document.getElementById('errorLog').textContent = `Error: ${error.message}`;
+                });
         }
 
-        // Listen for the iframe to be ready
+        // Listen for messages from the form iframe
         window.addEventListener('message', function(event) {
-            if (event.data.type === 'iframeReady') {
-                console.log('Iframe is ready to receive graph data');
-                // You can send initial graph data here if needed
+            if (event.data === 'deployGraph') {
+                deployGraph();
             }
         }, false);
-    </script> -->
+
+        // Log any errors from the iframes
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IFRAME') {
+                console.error('Error in iframe:', e);
+                document.getElementById('errorLog').textContent = `Error in iframe: ${e.message}`;
+            }
+        }, true);
+    </script>
 </body>
 </html>
