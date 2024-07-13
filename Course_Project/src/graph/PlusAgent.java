@@ -66,6 +66,13 @@ public class PlusAgent implements Agent {
 
     @Override
     public void close() {
+        if (this.input1 != null)
+            TopicManagerSingleton.get().getTopic(this.input1).unsubscribe(this);
+        if (this.output != null)
+            TopicManagerSingleton.get().getTopic(this.output).removePublisher(this);
+        if (this.input2 != null)
+            TopicManagerSingleton.get().getTopic(this.input2).unsubscribe(this);
+        instanceCount--;
     }
     
 }

@@ -99,11 +99,11 @@
 
         window.addEventListener('resize', function () {
             document.getElementById('graph').innerHTML = '';
-            createGraph([{ id: 'TA'},{ id: 'APlus0'},{ id: 'APlus1'},{ id: 'APlus2'},{ id: 'TB'},{ id: 'TC'},{ id: 'AInc0'},{ id: 'AInc1'},{ id: 'AInc2'},{ id: 'TD'}], [{ source: 'TA', target: 'APlus0' },{ source: 'TA', target: 'APlus1' },{ source: 'TA', target: 'APlus2' },{ source: 'APlus0', target: 'TC' },{ source: 'APlus1', target: 'TC' },{ source: 'APlus2', target: 'TC' },{ source: 'TB', target: 'APlus0' },{ source: 'TB', target: 'APlus1' },{ source: 'TB', target: 'APlus2' },{ source: 'TC', target: 'AInc0' },{ source: 'TC', target: 'AInc1' },{ source: 'TC', target: 'AInc2' },{ source: 'AInc0', target: 'TD' },{ source: 'AInc1', target: 'TD' },{ source: 'AInc2', target: 'TD' }]);
+            createGraph([{ id: 'TA', message: 'null'},{ id: 'APlus0'},{ id: 'TB', message: 'null'},{ id: 'TC', message: 'null'},{ id: 'AInc0'},{ id: 'TD', message: 'null'}], [{ source: 'TA', target: 'APlus0' },{ source: 'APlus0', target: 'TC' },{ source: 'TB', target: 'APlus0' },{ source: 'TC', target: 'AInc0' },{ source: 'AInc0', target: 'TD' }]);
             // window.location.reload();
         });
 
-        createGraph([{ id: 'TA'},{ id: 'APlus0'},{ id: 'APlus1'},{ id: 'APlus2'},{ id: 'TB'},{ id: 'TC'},{ id: 'AInc0'},{ id: 'AInc1'},{ id: 'AInc2'},{ id: 'TD'}], [{ source: 'TA', target: 'APlus0' },{ source: 'TA', target: 'APlus1' },{ source: 'TA', target: 'APlus2' },{ source: 'APlus0', target: 'TC' },{ source: 'APlus1', target: 'TC' },{ source: 'APlus2', target: 'TC' },{ source: 'TB', target: 'APlus0' },{ source: 'TB', target: 'APlus1' },{ source: 'TB', target: 'APlus2' },{ source: 'TC', target: 'AInc0' },{ source: 'TC', target: 'AInc1' },{ source: 'TC', target: 'AInc2' },{ source: 'AInc0', target: 'TD' },{ source: 'AInc1', target: 'TD' },{ source: 'AInc2', target: 'TD' }]);
+        createGraph([{ id: 'TA', message: 'null'},{ id: 'APlus0'},{ id: 'TB', message: 'null'},{ id: 'TC', message: 'null'},{ id: 'AInc0'},{ id: 'TD', message: 'null'}], [{ source: 'TA', target: 'APlus0' },{ source: 'APlus0', target: 'TC' },{ source: 'TB', target: 'APlus0' },{ source: 'TC', target: 'AInc0' },{ source: 'AInc0', target: 'TD' }]);
         // window.location.reload();
 
 

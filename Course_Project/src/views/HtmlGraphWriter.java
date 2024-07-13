@@ -22,13 +22,14 @@ public class HtmlGraphWriter {
             StringBuilder edgesBuilder = new StringBuilder();
             
             for (Node node : graph) {
-                String nodeType = node.getClass().getSimpleName().toLowerCase();
-                nodesBuilder.append(String.format("{ id: '%s'},", 
-                                    node.getName(), node.getName(), nodeType));
+                if (node.getName().charAt(0) == 'T'){
+                    nodesBuilder.append(String.format("{ id: '%s', message: '%s'},", node.getName(), node.getMessage()));
+                } else{
+                nodesBuilder.append(String.format("{ id: '%s'},", node.getName()));
+                }
                 
                 for (Node edge : node.getEdges()) {
-                    edgesBuilder.append(String.format("{ source: '%s', target: '%s' },", 
-                                        node.getName(), edge.getName()));
+                    edgesBuilder.append(String.format("{ source: '%s', target: '%s' },", node.getName(), edge.getName()));
                 }
             }
             

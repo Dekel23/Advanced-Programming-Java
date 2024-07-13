@@ -7,10 +7,10 @@ import server.RequestParser.RequestInfo;
 import graph.TopicManagerSingleton;
 import graph.Topic;
 import graph.Message;
-import graph.Agent;
+import graph.Node;
+import graph.Graph;
 
 public class TopicDisplayer implements Servlet {
-    private final TopicManagerSingleton.TopicManager topicManager = TopicManagerSingleton.get();
 
     @Override
     public void handle(RequestInfo ri, OutputStream toClient) throws IOException {
@@ -19,40 +19,37 @@ public class TopicDisplayer implements Servlet {
             return;
         }
 
+        // Create Graph instance
+        Graph graph = new Graph();
+        graph.createFromTopics();
+
         Map<String, String> parameters = ri.getParameters();
         String topicName = parameters.get("topic");
         String messageContent = parameters.get("message");
 
         if (topicName != null && messageContent != null) {
-            Topic topic = topicManager.getTopic(topicName);
+            Topic topic = TopicManagerSingleton.get().getTopic(topicName);
             Message message = new Message(messageContent);
             topic.publish(message);
         }
 
-        StringBuilder htmlContent = new StringBuilder();
-        htmlContent.append("<html><body>");
-        htmlContent.append("<h1>Topic Information</h1>");
-        htmlContent.append("<table border='1'><tr><th>Topic</th><th>Subscribers</th><th>Publishers</th></tr>");
+        StringBuilder html = new StringBuilder();
+        html.append("<html><body>");
+        html.append("<h1>Topic Information</h1>");
+        html.append("<table border='1'><tr><th>Topic</th><th>Message</th></tr>");
 
-        for (Topic topic : topicManager.getTopics()) {
-            htmlContent.append("<tr><td>").append(topic.name).append("</td><td>");
-            for (Agent sub : topic.getSubs()) {
-                htmlContent.append(sub.getName()).append("<br>");
+        for (Node node : graph) {
+            if (node.getName().charAt(0) == 'T'){
+                html.append("<tr><td>").append(node.getName()).append("</td>");
+                html.append("<td>").append(node.getMessage()).append("</td></tr>");
             }
-            htmlContent.append("</td><td>");
-            for (Agent pub : topic.getPubs()) {
-                htmlContent.append(pub.getName()).append("<br>");
-            }
-            htmlContent.append("</td></tr>");
         }
 
-        htmlContent.append("</table></body></html>");
-
-        String response = "HTTP/1.1 200 OK\r\n" +
-                          "Content-Type: text/html\r\n" +
-                          "Content-Length: " + htmlContent.length() + "\r\n" +
-                          "\r\n" +
-                          htmlContent.toString();
+        html.append("</table></body></html>");
+    
+        String htmlContent = html.toString();
+        String response = String.format("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%s",
+                                        htmlContent.length(), htmlContent);
 
         sendResponse(toClient, response);
     }

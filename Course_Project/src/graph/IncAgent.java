@@ -51,6 +51,11 @@ public class IncAgent implements Agent {
 
     @Override
     public void close() {
+        if (this.input != null)
+            TopicManagerSingleton.get().getTopic(this.input).unsubscribe(this);
+        if (this.output != null)
+            TopicManagerSingleton.get().getTopic(this.output).removePublisher(this);
+        instanceCount--;
     }
     
 }

@@ -70,8 +70,17 @@ public class MyHTTPServer extends Thread implements HTTPServer {
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
         running = false;
+        for (Servlet servlet: this.getServlets.values()){
+            servlet.close();
+        }
+        for (Servlet servlet: this.postServlets.values()){
+            servlet.close();
+        }
+        for (Servlet servlet: this.deleteServlets.values()){
+            servlet.close();
+        }
         threadPool.shutdown();
         try {
             if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {

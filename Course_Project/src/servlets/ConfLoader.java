@@ -13,6 +13,14 @@ import configs.GenericConfig;
 import graph.Graph;
 
 public class ConfLoader implements Servlet {
+
+    private final String filePath = "../html_files/graph.html";
+    private GenericConfig config;
+
+    public ConfLoader() {
+        this.config = new GenericConfig();
+    }
+
     @Override
     public void handle(RequestInfo ri, OutputStream toClient) throws IOException {
         if (!"POST".equals(ri.getHttpCommand())) {
@@ -29,7 +37,7 @@ public class ConfLoader implements Servlet {
             Files.write(Paths.get(fileName), fileContent);
 
             // Load GenericConfig
-            GenericConfig config = new GenericConfig();
+            config.close();
             config.setConfFile(fileName);
             config.create();
 
@@ -40,17 +48,15 @@ public class ConfLoader implements Servlet {
             // Generate HTML representation of the graph
             String graphHtml = String.join("\n", HtmlGraphWriter.getGraphHTML(graph));
 
-            String filePath = "../html_files/graph.html";
-
             // Remove existing content
-            File file = new File(filePath);
+            File file = new File(this.filePath);
             if (file.exists()) {
                 file.delete();
             }
 
             // Write new content
             try {
-                FileWriter myWriter = new FileWriter(filePath);
+                FileWriter myWriter = new FileWriter(this.filePath);
                 myWriter.write(graphHtml);
                 myWriter.close();
                 System.out.println("Successfully wrote to the file.");
@@ -75,6 +81,11 @@ public class ConfLoader implements Servlet {
 
     @Override
     public void close() throws IOException {
-        // No resources to close
+        config.close();
+        // Remove existing content
+        File file = new File(this.filePath);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 }

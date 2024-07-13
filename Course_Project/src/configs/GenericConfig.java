@@ -16,7 +16,7 @@ public class GenericConfig implements Config {
     private String file;
 
     public GenericConfig(){
-        agents = new ArrayList<>();
+        close();
     }
 
     public void setConfFile(String file){
@@ -62,9 +62,12 @@ public class GenericConfig implements Config {
     }
 
     public void close() {
-        for (Agent a: this.agents){
-            a.close();
+        if (this.agents != null) {
+            for (Agent a: this.agents) {
+                a.close();
+            }
         }
+        agents = new ArrayList<>();
     }
 
     @Override

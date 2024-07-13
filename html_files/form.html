@@ -15,21 +15,34 @@
     </style>
 </head>
 <body>
-     <h2>Configuration Upload</h2>
+    <h2>Configuration Upload</h2>
     <form id="uploadForm" action="http://localhost:8080/upload" method="post" enctype="multipart/form-data" target="_parent">
         <input type="file" name="confFile" required>
-        <button type="submit" onclick="deployGraph()">Deploy</button>
+        <button type="submit" id="deployButton">Deploy</button>
     </form>
 
     <script type="text/javascript">
-        function deployGraph() {
-            window.parent.postMessage('deployGraph', '*');
-        }
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
 
-        function sendMessage() {
-            // Implement send message functionality here
-            console.log('Send message clicked');
-        }
+            // Create a FormData object from the form
+            var formData = new FormData(this);
+
+            // Perform the form submission using fetch
+            fetch(this.action, {
+                method: this.method,
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    // Form submission successful, now send the postMessage
+                    window.parent.postMessage('deployGraph', '*');
+                } else {
+                    console.error('Form submission failed');
+                }
+            }).catch(error => {
+                console.error('Error during form submission:', error);
+            });
+        });
     </script>
 
     <h2>Send Message to Topic</h2>
