@@ -1,14 +1,16 @@
 package servlets;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import server.RequestParser.RequestInfo;
+import views.HtmlGraphWriter;
 import configs.GenericConfig;
 import graph.Graph;
-import graph.Node;
 
 public class ConfLoader implements Servlet {
     @Override
@@ -36,48 +38,34 @@ public class ConfLoader implements Servlet {
             graph.createFromTopics();
 
             // Generate HTML representation of the graph
-            String graphHtml = generateGraphHtml(graph);
+            String graphHtml = String.join("\n", HtmlGraphWriter.getGraphHTML(graph));
 
-            String response = "HTTP/1.1 200 OK\r\n" +
-                              "Content-Type: text/html\r\n" +
-                              "Content-Length: " + graphHtml.length() + "\r\n" +
-                              "\r\n" +
-                              graphHtml;
+            String filePath = "../html_files/graph.html";
+
+            // Remove existing content
+            File file = new File(filePath);
+            if (file.exists()) {
+                file.delete();
+            }
+
+            // Write new content
+            try {
+                FileWriter myWriter = new FileWriter(filePath);
+                myWriter.write(graphHtml);
+                myWriter.close();
+                System.out.println("Successfully wrote to the file.");
+            } catch (IOException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+
+            String response = "HTTP/1.1 205 Reset Content\r\n" +
+                              "\r\n";
 
             sendResponse(toClient, response);
         } else {
             sendResponse(toClient, "HTTP/1.1 400 Bad Request\r\n\r\nMissing file name or content");
         }
-    }
-
-    private String generateGraphHtml(Graph graph) {
-        StringBuilder html = new StringBuilder();
-        html.append("<html><head><style>");
-        html.append("table { border-collapse: collapse; width: 100%; }");
-        html.append("th, td { border: 1px solid black; padding: 8px; text-align: left; }");
-        html.append("th { background-color: #f2f2f2; }");
-        html.append("</style></head><body>");
-        html.append("<h1>Computational Graph</h1>");
-        html.append("<table><tr><th>Node</th><th>Edges</th><th>Message</th></tr>");
-        
-        for (Node node : graph) {
-            html.append("<tr><td>").append(node.getName()).append("</td><td>");
-            for (Node edge : node.getEdges()) {
-                html.append(edge.getName()).append("<br>");
-            }
-            html.append("</td><td>");
-            if (node.getMessage() != null) {
-                html.append(node.getMessage().asText);
-            }
-            html.append("</td></tr>");
-        }
-        
-        html.append("</table>");
-        if (graph.hasCycles()) {
-            html.append("<p style='color: red;'><strong>Warning: The graph contains cycles!</strong></p>");
-        }
-        html.append("</body></html>");
-        return html.toString();
     }
 
     private void sendResponse(OutputStream toClient, String response) throws IOException {

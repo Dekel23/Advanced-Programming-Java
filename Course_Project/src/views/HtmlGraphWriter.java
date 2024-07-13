@@ -15,7 +15,7 @@ public class HtmlGraphWriter {
         
         try {
             // Read the static HTML template
-            String template = new String(Files.readAllBytes(Paths.get("files_html/graph.html")));
+            String template = new String(Files.readAllBytes(Paths.get("../html_files/graphTemplate.html")));
             
             // Generate nodes and edges representation
             StringBuilder nodesBuilder = new StringBuilder();
@@ -23,11 +23,11 @@ public class HtmlGraphWriter {
             
             for (Node node : graph) {
                 String nodeType = node.getClass().getSimpleName().toLowerCase();
-                nodesBuilder.append(String.format("{ id: '%s', label: '%s', type: '%s' },", 
+                nodesBuilder.append(String.format("{ id: '%s'},", 
                                     node.getName(), node.getName(), nodeType));
                 
                 for (Node edge : node.getEdges()) {
-                    edgesBuilder.append(String.format("{ from: '%s', to: '%s' },", 
+                    edgesBuilder.append(String.format("{ source: '%s', target: '%s' },", 
                                         node.getName(), edge.getName()));
                 }
             }
@@ -40,17 +40,18 @@ public class HtmlGraphWriter {
                 edgesBuilder.setLength(edgesBuilder.length() - 1);
             }
             
-            // Create the function call with actual data
             String graphData = String.format("createGraph([%s], [%s]);", nodesBuilder.toString(), edgesBuilder.toString());
             
             // Replace placeholder in the template
-            String filledTemplate = template.replace("// createGraph({{NODES}}, {{EDGES}});", graphData);
             
+            String filledTemplate = template.replace("// createGraph({{NODES}}, {{EDGES}});", graphData);
             // Split the filled template into lines
+
             String[] lines = filledTemplate.split("\n");
             for (String line : lines) {
                 htmlContent.add(line);
             }
+
         } catch (IOException e) {
             e.printStackTrace();
             htmlContent.add("<p>Error generating graph visualization.</p>");

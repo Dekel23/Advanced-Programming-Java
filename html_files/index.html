@@ -29,7 +29,27 @@
 </head>
 <body>
     <iframe id="left-panel" src="form.html"></iframe>
-    <iframe id="center-panel" src="temp.html"></iframe>
+    <iframe id="center-panel" src="graph.html" style="width: 100%; height: 600px; border: none;" onLoad="alert('Test')"></iframe>
     <iframe id="right-panel" src="temp.html"></iframe>
+    <!-- <script>
+        const iframe = document.getElementById('center-panel');
+
+        // Function to update the graph
+        function updateGraph(newGraphData) {
+            iframe.contentWindow.postMessage({
+                type: 'updateGraph',
+                graphData: newGraphData
+            }, '*');
+            window.location.reload()
+        }
+
+        // Listen for the iframe to be ready
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'iframeReady') {
+                console.log('Iframe is ready to receive graph data');
+                // You can send initial graph data here if needed
+            }
+        }, false);
+    </script> -->
 </body>
 </html>
