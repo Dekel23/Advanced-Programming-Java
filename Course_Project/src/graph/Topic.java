@@ -8,7 +8,8 @@ public class Topic {
     public final String name;
     private List<Agent> subs = new ArrayList<>();
     private List<Agent> pubs = new ArrayList<>();
-    
+    public Message export;
+
     Topic(String name) {
         this.name=name;
     }
@@ -25,6 +26,7 @@ public class Topic {
     }
 
     public void publish(Message m) {
+        export = m;
     	for (Agent sub: this.subs)
     		sub.callback(this.name, m);
     }

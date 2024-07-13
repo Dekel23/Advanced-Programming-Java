@@ -23,6 +23,7 @@ public class Graph extends ArrayList<Node>{
     public void createFromTopics(){
         for (Topic t: TopicManagerSingleton.get().getTopics()){
             Node node_t = new Node("T" + t.name);
+            node_t.setMessage(t.export);
             this.add(node_t);
             t.getSubs().forEach(a -> {
                 Node node_a = this.getAgent(a);

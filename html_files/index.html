@@ -18,8 +18,12 @@
     <iframe id="formFrame" src="form.html" width="400" height="200"></iframe>
     
     <h2>Graph Visualization</h2>
-    <div id="errorLog" style="color: red;"></div>
+    <div id="errorLogGraph" style="color: red;"></div>
     <iframe id="graphFrame" src="about:blank" width="800" height="600"></iframe>
+
+    <h2>Table</h2>
+    <div id="errorLogTable" style="color: red;"></div>
+    <iframe id="tableFrame" src="about:blank" width="800" height="600"></iframe>
 
     <script>
         function deployGraph() {
@@ -39,7 +43,28 @@
                 })
                 .catch(error => {
                     console.error('Error loading graph:', error);
-                    document.getElementById('errorLog').textContent = `Error: ${error.message}`;
+                    document.getElementById('errorLogGraph').textContent = `Error: ${error.message}`;
+                });
+        }
+
+        function deployTable() {
+            fetch('table.html')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const frame = document.getElementById('tableFrame');
+                    frame.srcdoc = html;
+                    frame.onload = () => {
+                        console.log('Temp loaded successfully');
+                    };
+                })
+                .catch(error => {
+                    console.error('Error loading table:', error);
+                    document.getElementById('errorLogTable').textContent = `Error: ${error.message}`;
                 });
         }
 
@@ -47,6 +72,8 @@
         window.addEventListener('message', function(event) {
             if (event.data === 'deployGraph') {
                 deployGraph();
+            } else if (event.data === 'deployTable') {
+                deployTable();
             }
         }, false);
 

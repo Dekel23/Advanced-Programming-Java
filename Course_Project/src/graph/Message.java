@@ -9,7 +9,6 @@ public class Message {
     public final double asDouble;
     public final Date date;
 
-
     public Message(String asText) {
         this.asText = asText;
         this.data = this.asText.getBytes();
