@@ -110,5 +110,13 @@ public class RequestParser {
         public byte[] getContent() {
             return content;
         }
+
+        public void print() {
+            System.out.println("command: " + httpCommand);
+            System.out.println("uri: " + uri);
+            System.out.println("segments: " + uriSegments);
+            System.out.println("param: " + parameters.toString());
+            System.out.println("content: " + content.toString());
+        }
     }
 }

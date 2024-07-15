@@ -116,7 +116,7 @@ public class MyHTTPServer extends Thread implements HTTPServer {
 
     private void handleClient(Socket clientSocket) {
         try (OutputStream out = clientSocket.getOutputStream();
-             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
             
             RequestInfo requestInfo = RequestParser.parseRequest(in);
             Servlet servlet = findServlet(requestInfo.getHttpCommand(), requestInfo.getUri());

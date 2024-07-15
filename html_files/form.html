@@ -17,7 +17,7 @@
 <body>
     <h2>Configuration Upload</h2>
     <form id="uploadForm" action="http://localhost:8080/upload" method="post" enctype="multipart/form-data" target="_parent">
-        <input type="file" name="confFile" required>
+        <input type="file" id="confFile" name="confFile" required>
         <button type="submit" id="deployButton">Deploy</button>
     </form>
 
@@ -27,19 +27,16 @@
 
             // Create a FormData object from the form
             var formData = new FormData(this);
-
+            formData.append("filename", document.getElementById("confFile").value);
+                        
             // Perform the form submission using fetch
             fetch(this.action, {
                 method: this.method,
                 body: formData
             }).then(response => {
-                if (response.ok) {
-                    // Form submission successful, now send the postMessage
-                    window.parent.postMessage('deployGraph', '*');
-                    window.parent.postMessage('deployTable', '*')
-                } else {
-                    console.error('Form submission failed');
-                }
+                // Form submission successful, now send the postMessage
+                window.parent.postMessage('deployGraph', '*');
+                window.parent.postMessage('deployTable', '*');
             }).catch(error => {
                 console.error('Error during form submission:', error);
             });
@@ -47,33 +44,32 @@
     </script>
 
     <h2>Send Message to Topic</h2>
-    <form id="publishForm" action="http://localhost:8080/publish" method="get" target="right-panel">
-        <input type="text" name="topic" placeholder="Topic name" required>
-        <input type="text" name="message" placeholder="Message" required>
+    <form id="publishForm" target="right-panel">
+        <input type="text" id="topic" name="topic" placeholder="Topic name" required>
+        <input type="text" id="message" name="message" placeholder="Message" required>
         <button type="submit" id="sendButton">Send</button>
     </form>
 
     <script type="text/javascript">
+
         document.getElementById('publishForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent the default form submission
 
-            // Create a FormData object from the form
-            var formData = new FormData(this);
+            const message = document.getElementById("message").value;
+            const topic = document.getElementById("topic").value;
+
+            const url = `/publish?message=${encodeURIComponent(message)}&topic=${encodeURIComponent(topic)}`;
 
             // Perform the form submission using fetch
-            fetch(this.action, {
-                method: this.method,
-                body: formData
-            }).then(response => {
-                if (response.ok) {
-                    // Form submission successful, now send the postMessage
-                    window.parent.postMessage('deployGraph', '*');
-                    window.parent.postMessage('deployTable', '*')
-                } else {
-                    console.error('Form submission failed');
-                }
-            }).catch(error => {
-                console.error('Error during form submission:', error);
+            fetch(url, {
+                method: 'GET',
+            })
+            .then(data => {
+                console.log("Success!", data);
+                document.getElementById('deployButton').click();
+            })
+            .catch(error => {
+                console.error('Error during sending the message:', error);
             });
         });
     </script>

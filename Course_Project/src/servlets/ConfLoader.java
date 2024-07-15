@@ -11,14 +11,76 @@ import server.RequestParser.RequestInfo;
 import views.HtmlGraphWriter;
 import configs.GenericConfig;
 import graph.Graph;
+import graph.Topic;
+import graph.TopicManagerSingleton;
 
 public class ConfLoader implements Servlet {
 
-    private final String filePath = "../html_files/graph.html";
+    private final String graphPath = "../html_files/graph.html";
+    private final String tablePath = "../html_files/table.html";
     private GenericConfig config;
 
     public ConfLoader() {
         this.config = new GenericConfig();
+    }
+
+    public void createTable() {
+        StringBuilder html = new StringBuilder();
+        html.append("<html><body>\n");
+        html.append("<h1>Topic Information</h1>\n");
+        html.append("<table border='1'><tr><th>Topic</th><th>Message</th></tr>\n");
+
+        for (Topic topic : TopicManagerSingleton.get().getTopics()) {
+            html.append("<tr><td>").append("T" + topic.name).append("</td>\n");
+            html.append("<td>").append(topic.export.asText).append("</td></tr>\n");
+        }
+
+        html.append("</table></body></html>");
+
+        String htmlContent = html.toString();
+
+        // Remove existing content
+        File file = new File(this.tablePath);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        // Write new content
+        try {
+            FileWriter myWriter = new FileWriter(this.tablePath);
+            myWriter.write(htmlContent);
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+    
+    public void createGraph() {
+        // Create Graph instance
+        Graph graph = new Graph();
+        graph.createFromTopics();
+
+        // Generate HTML representation of the graph
+        String graphHtml = String.join("\n", HtmlGraphWriter.getGraphHTML(graph));
+
+        // Remove existing content
+        File file = new File(this.graphPath);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        // Write new content
+        try {
+            FileWriter myWriter = new FileWriter(this.graphPath);
+            myWriter.write(graphHtml);
+            myWriter.close();
+            System.out.println("Successfully wrote to the graph.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -41,31 +103,10 @@ public class ConfLoader implements Servlet {
             config.setConfFile(fileName);
             config.create();
 
-            // Create Graph instance
-            Graph graph = new Graph();
-            graph.createFromTopics();
+            this.createGraph();
+            this.createTable();
 
-            // Generate HTML representation of the graph
-            String graphHtml = String.join("\n", HtmlGraphWriter.getGraphHTML(graph));
-
-            // Remove existing content
-            File file = new File(this.filePath);
-            if (file.exists()) {
-                file.delete();
-            }
-
-            // Write new content
-            try {
-                FileWriter myWriter = new FileWriter(this.filePath);
-                myWriter.write(graphHtml);
-                myWriter.close();
-                System.out.println("Successfully wrote to the file.");
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-
-            String response = "HTTP/1.1 205 Reset Content\r\n" +
+            String response = "HTTP/1.1 200 OK\r\n" +
                               "\r\n";
 
             sendResponse(toClient, response);
@@ -83,7 +124,11 @@ public class ConfLoader implements Servlet {
     public void close() throws IOException {
         config.close();
         // Remove existing content
-        File file = new File(this.filePath);
+        File file = new File(this.graphPath);
+        if (file.exists()) {
+            file.delete();
+        }
+        file = new File(this.tablePath);
         if (file.exists()) {
             file.delete();
         }

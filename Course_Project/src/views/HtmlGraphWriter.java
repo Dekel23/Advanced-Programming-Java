@@ -23,7 +23,7 @@ public class HtmlGraphWriter {
             
             for (Node node : graph) {
                 if (node.getName().charAt(0) == 'T'){
-                    nodesBuilder.append(String.format("{ id: '%s', message: '%s'},", node.getName(), node.getMessage()));
+                    nodesBuilder.append(String.format("{ id: '%s', message: '%s'},", node.getName(), node.getMessage().asText));
                 } else{
                 nodesBuilder.append(String.format("{ id: '%s'},", node.getName()));
                 }

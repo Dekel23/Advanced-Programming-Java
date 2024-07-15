@@ -12,6 +12,7 @@ public class Topic {
 
     Topic(String name) {
         this.name=name;
+        this.export = new Message("");
     }
 
     public List<Agent> getSubs() {return this.subs;}
@@ -26,7 +27,7 @@ public class Topic {
     }
 
     public void publish(Message m) {
-        export = m;
+        this.export = m;
     	for (Agent sub: this.subs)
     		sub.callback(this.name, m);
     }
