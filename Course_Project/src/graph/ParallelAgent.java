@@ -14,11 +14,12 @@ public class ParallelAgent implements Agent {
         this.messageQueue = new ArrayBlockingQueue<>(capacity);
         this.stop = false;
         
+        // Thread to execute the callback's
         Thread t = new Thread(()-> {
             while (!this.stop) {
-                if (this.messageQueue.size() > 0){
+                if (this.messageQueue.size() > 0){ // If there is something
                     try {
-                        String topic = this.messageQueue.take().asText;
+                        String topic = this.messageQueue.take().asText; // Take first parameters of callback and do it
                         Message msg = this.messageQueue.take();
                         this.agent.callback(topic, msg);
                     } catch (InterruptedException e) {
@@ -27,13 +28,13 @@ public class ParallelAgent implements Agent {
                 }
             }
         });
-        t.start();
+        t.start(); // Start thread
     }
 
     @Override
     public void callback(String topic, Message msg) {
         try {
-            this.messageQueue.put(new Message(topic));
+            this.messageQueue.put(new Message(topic)); // Put now callback in the queue
             this.messageQueue.put(msg);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -47,12 +48,22 @@ public class ParallelAgent implements Agent {
 
     @Override
     public void reset() {
-        this.agent.reset();
+        this.agent.reset(); // Call agent's reset
     }
 
     @Override
     public void close() {
-        this.stop = true;
+        this.stop = true; // Stops and call agent's close
         this.agent.close();
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        
+        ParallelAgent other = (ParallelAgent) obj;
+        
+        return this.agent.equals(other.agent); // Return if agents are equal
     }
 }

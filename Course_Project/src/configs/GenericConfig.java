@@ -16,40 +16,49 @@ public class GenericConfig implements Config {
     private String file;
 
     public GenericConfig(){
-        close();
+        agents = new ArrayList<>();
     }
 
+    // Set config file to read from
     public void setConfFile(String file){
         this.file = file;
     }
 
+    // Create system agents and topics from file
     @Override
     public void create() {
         List<String> lines;
         try {
-            lines = Files.readAllLines(Paths.get(this.file));
+            lines = Files.readAllLines(Paths.get(this.file)); // Read all lines
         } catch(Exception e) {
             e.printStackTrace();
             System.out.println("Can't read file " + this.file + " in config " + this.getName());
             return;
         }
 
-        if (lines.size() % 3 != 0){
+        if (lines.size() % 3 != 0){ // If not multyple of 3
             System.out.println("Invalid number of lines in file " + this.file);
             return;
         }
 
         for (int i = 0; i < lines.size(); i+=3){
-            String[] subs = lines.get(i + 1).split(",");
+            String[] subs = lines.get(i + 1).split(","); // Get list of subs and pubs of the agent
             String[] pubs = lines.get(i + 2).split(",");
 
             try {
-                Class<?> agentClass = Class.forName(lines.get(i));
+                Class<?> agentClass = Class.forName(lines.get(i)); // Create new agent from line
                 try {
                     Constructor<?> constructor = agentClass.getConstructor(subs.getClass(), pubs.getClass());
                     Agent agent = (Agent) constructor.newInstance(subs, pubs);
-                    Agent parallelAgent = new ParallelAgent(agent, capacity);
-                    agents.add(parallelAgent);
+                    Agent parallelAgent = new ParallelAgent(agent, capacity); // Create parallelAgent from agent
+
+                    if (this.agents.stream().noneMatch(parallelAgent::equals)) { // Add if not in list
+                        agents.add(parallelAgent);
+                    } else {
+                        parallelAgent.close(); // If exist close the new one
+                        agent = null;
+                        parallelAgent = null;
+                    }
                 } catch (Exception e) {
                     System.out.println("Cant make constructor for line " + (i+1) + ": " + lines.get(i) + " in file" + this.file);
                     return;
@@ -62,12 +71,9 @@ public class GenericConfig implements Config {
     }
 
     public void close() {
-        if (this.agents != null) {
-            for (Agent a: this.agents) {
-                a.close();
-            }
+        for (Agent a: this.agents) { // Close all agents in List
+            a.close();
         }
-        agents = new ArrayList<>();
     }
 
     @Override

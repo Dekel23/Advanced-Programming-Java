@@ -22,14 +22,14 @@ public class HtmlGraphWriter {
             StringBuilder edgesBuilder = new StringBuilder();
             
             for (Node node : graph) {
-                if (node.getName().charAt(0) == 'T'){
-                    nodesBuilder.append(String.format("{ id: '%s', message: '%s'},", node.getName(), node.getMessage().asText));
-                } else{
-                nodesBuilder.append(String.format("{ id: '%s'},", node.getName()));
+                if (node.getName().charAt(0) == 'T'){ // If Topic then color blue
+                    nodesBuilder.append(String.format("{ id: '%s', message: '%s', color: 'blue'},", node.getName().substring(1), node.getMessage().asText));
+                } else if (node.getName().charAt(0) == 'A'){ // If Agent then color red
+                    nodesBuilder.append(String.format("{ id: '%s', message: '%s', color: 'red'},", node.getName().substring(1), node.getMessage().asText));
                 }
                 
                 for (Node edge : node.getEdges()) {
-                    edgesBuilder.append(String.format("{ source: '%s', target: '%s' },", node.getName(), edge.getName()));
+                    edgesBuilder.append(String.format("{ source: '%s', target: '%s' },", node.getName().substring(1), edge.getName().substring(1)));
                 }
             }
             
@@ -41,13 +41,13 @@ public class HtmlGraphWriter {
                 edgesBuilder.setLength(edgesBuilder.length() - 1);
             }
             
+            // Change strings format
             String graphData = String.format("createGraph([%s], [%s]);", nodesBuilder.toString(), edgesBuilder.toString());
             
-            // Replace placeholder in the template
-            
+             // Change template to current graph
             String filledTemplate = template.replace("// createGraph({{NODES}}, {{EDGES}});", graphData);
-            // Split the filled template into lines
 
+            // Split content to lines
             String[] lines = filledTemplate.split("\n");
             for (String line : lines) {
                 htmlContent.add(line);

@@ -2,25 +2,23 @@ package graph;
 
 public class IncAgent implements Agent {
 
-    private static int instanceCount = 0;
-    private String name;
+    private final String name = "Inc";
     private String input;
     private String output;
     private double num;
     
     public IncAgent(String[] subs, String[] pubs) {
-        this.name = "Inc" + Integer.toString(instanceCount++);
-        this.reset();
+        this.reset(); // Reset value to 0
         try {
             input = subs[0];
-            TopicManagerSingleton.get().getTopic(this.input).subscribe(this);
+            TopicManagerSingleton.get().getTopic(this.input).subscribe(this); // If exist subscribe to him
         } catch (Exception e) {
             input = null;
             System.out.println("No subs for Agent: " + this.name);;
         }
         try {
             output = pubs[0];
-            TopicManagerSingleton.get().getTopic(this.output).addPublisher(this);
+            TopicManagerSingleton.get().getTopic(this.output).addPublisher(this); // If exist publish to him
         } catch (Exception e) {
             output = null;
             System.out.println("No pubs for Agent: " + this.name);;
@@ -32,30 +30,42 @@ public class IncAgent implements Agent {
 
     @Override
     public void reset() {
-        this.num = 0;
+        this.num = 0; // Reset value to 0
     }
 
     @Override
     public void callback(String topic, Message msg) {
         double num = msg.asDouble;
 
-        if (Double.isNaN(num))
+        if (Double.isNaN(num)) // If message can't interpret as double
             return;
         
-        if (topic.equals(this.input)) {
-            this.num = num;
-            if (this.output != null)
+        if (topic.equals(this.input)) { // If topic is first publisher
+            this.num = num; // Update value
+            System.out.println("Agent: " + this.name + " Changed to: " + this.num);
+            if (this.output != null) // Update subscriber
                 TopicManagerSingleton.get().getTopic(this.output).publish(new Message(this.num + 1));
         }
     }
 
     @Override
     public void close() {
+        // Unsubscribe and publish to all topics
         if (this.input != null)
             TopicManagerSingleton.get().getTopic(this.input).unsubscribe(this);
         if (this.output != null)
             TopicManagerSingleton.get().getTopic(this.output).removePublisher(this);
-        instanceCount--;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        
+        IncAgent other = (IncAgent) obj;
+        
+        return input.equals(other.input) &&
+               output.equals(other.output); // Return if same publishers and subscribers
     }
     
 }

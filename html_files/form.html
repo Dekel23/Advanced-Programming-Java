@@ -58,7 +58,7 @@
             const message = document.getElementById("message").value;
             const topic = document.getElementById("topic").value;
 
-            const url = `/publish?message=${encodeURIComponent(message)}&topic=${encodeURIComponent(topic)}`;
+            const url = `http://localhost:8080/publish?message=${encodeURIComponent(message)}&topic=${encodeURIComponent(topic)}`;
 
             // Perform the form submission using fetch
             fetch(url, {

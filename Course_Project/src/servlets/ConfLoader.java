@@ -26,16 +26,16 @@ public class ConfLoader implements Servlet {
 
     public void createTable() {
         StringBuilder html = new StringBuilder();
-        html.append("<html><body>\n");
-        html.append("<h1>Topic Information</h1>\n");
-        html.append("<table border='1'><tr><th>Topic</th><th>Message</th></tr>\n");
+        html.append("<html>\n\t<body>\n");
+        html.append("\t\t<h1>Topic Information</h1>\n");
+        html.append("\t\t<table border='1'>\n\t\t\t<tr><th>Topic</th><th>Message</th></tr>\n");
 
         for (Topic topic : TopicManagerSingleton.get().getTopics()) {
-            html.append("<tr><td>").append("T" + topic.name).append("</td>\n");
-            html.append("<td>").append(topic.export.asText).append("</td></tr>\n");
+            html.append("\t\t\t<tr><td>").append(topic.name).append("</td>");
+            html.append("<td>").append(topic.getMessage().asText).append("</td></tr>\n");
         }
 
-        html.append("</table></body></html>");
+        html.append("\t\t</table>\n\t</body>\n</html>");
 
         String htmlContent = html.toString();
 
@@ -50,7 +50,6 @@ public class ConfLoader implements Servlet {
             FileWriter myWriter = new FileWriter(this.tablePath);
             myWriter.write(htmlContent);
             myWriter.close();
-            System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -76,7 +75,6 @@ public class ConfLoader implements Servlet {
             FileWriter myWriter = new FileWriter(this.graphPath);
             myWriter.write(graphHtml);
             myWriter.close();
-            System.out.println("Successfully wrote to the graph.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -99,7 +97,6 @@ public class ConfLoader implements Servlet {
             Files.write(Paths.get(fileName), fileContent);
 
             // Load GenericConfig
-            config.close();
             config.setConfFile(fileName);
             config.create();
 

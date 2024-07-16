@@ -40,5 +40,6 @@ public class TopicDisplayer implements Servlet {
 
     @Override
     public void close() throws IOException {
+        TopicManagerSingleton.get().clear();
     }
 }

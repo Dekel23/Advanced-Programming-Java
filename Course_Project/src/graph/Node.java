@@ -14,6 +14,7 @@ public class Node {
     public Node(String name) {
         this.name = name;
         this.edges = new ArrayList<>();
+        this.msg = new Message("");
     }
 
     public String getName() {return this.name;}
@@ -28,6 +29,7 @@ public class Node {
         this.edges.add(edge);
     }
 
+    // Check if there are Cycles in the nodes
     public boolean hasCycles(){
         Set<Node> visited = new HashSet<>();
         Set<Node> inStack = new HashSet<>();

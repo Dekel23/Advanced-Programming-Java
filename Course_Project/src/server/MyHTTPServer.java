@@ -32,7 +32,7 @@ public class MyHTTPServer extends Thread implements HTTPServer {
 
     @Override
     public void addServlet(String httpCommand, String uri, Servlet s) {
-        switch (httpCommand) {
+        switch (httpCommand) { // Add servlet to map by http command
             case "GET":
                 getServlets.put(uri, s);
                 break;
@@ -49,7 +49,7 @@ public class MyHTTPServer extends Thread implements HTTPServer {
 
     @Override
     public void removeServlet(String httpCommand, String uri) {
-        switch (httpCommand.toUpperCase()) {
+        switch (httpCommand.toUpperCase()) { // Remove servlet from map by http command
             case "GET":
                 getServlets.remove(uri);
                 break;
@@ -71,7 +71,8 @@ public class MyHTTPServer extends Thread implements HTTPServer {
 
     @Override
     public void close() throws IOException {
-        running = false;
+        running = false; // Set running to false
+        // Close all servlets
         for (Servlet servlet: this.getServlets.values()){
             servlet.close();
         }
@@ -81,6 +82,7 @@ public class MyHTTPServer extends Thread implements HTTPServer {
         for (Servlet servlet: this.deleteServlets.values()){
             servlet.close();
         }
+        // Close all threads
         threadPool.shutdown();
         try {
             if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
@@ -101,8 +103,8 @@ public class MyHTTPServer extends Thread implements HTTPServer {
             serverSocket = server;
             while (running) {
                 try {
-                    Socket clientSocket = server.accept();
-                    this.threadPool.submit(() -> handleClient(clientSocket));
+                    Socket clientSocket = server.accept(); // Wait to accept client
+                    this.threadPool.submit(() -> handleClient(clientSocket)); // Add handle new client to thread pool 
                 } catch (IOException e) {
                     if (running) {
                         e.printStackTrace();
@@ -118,11 +120,11 @@ public class MyHTTPServer extends Thread implements HTTPServer {
         try (OutputStream out = clientSocket.getOutputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
             
-            RequestInfo requestInfo = RequestParser.parseRequest(in);
-            Servlet servlet = findServlet(requestInfo.getHttpCommand(), requestInfo.getUri());
+            RequestInfo requestInfo = RequestParser.parseRequest(in); // Parse http request
+            Servlet servlet = findServlet(requestInfo.getHttpCommand(), requestInfo.getUri()); // Find best servlet
             
             if (servlet != null) {
-                servlet.handle(requestInfo, out);
+                servlet.handle(requestInfo, out); // Let servlet handle request
             } else {
                 String response = "HTTP/1.1 404 Not Found\r\n\r\n";
                 out.write(response.getBytes());
@@ -133,7 +135,7 @@ public class MyHTTPServer extends Thread implements HTTPServer {
     }
 
     private Servlet findServlet(String httpCommand, String uri) {
-        ConcurrentHashMap<String, Servlet> servletMap;
+        ConcurrentHashMap<String, Servlet> servletMap; // Set map by http command
         switch (httpCommand.toUpperCase()) {
             case "GET":
                 servletMap = getServlets;
@@ -148,6 +150,7 @@ public class MyHTTPServer extends Thread implements HTTPServer {
                 return null;
         }
 
+        // Find servlet in map that best match the uri
         String longestMatch = "";
         Servlet matchedServlet = null;
         for (String key : servletMap.keySet()) {

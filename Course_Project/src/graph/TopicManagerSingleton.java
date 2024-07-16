@@ -15,12 +15,12 @@ public class TopicManagerSingleton {
         }
         
         public Topic getTopic(String name) {
-            Topic topic = this.nameToTopic.get(name);
+            Topic topic = this.nameToTopic.get(name); // Return if exist
             if (topic == null) {
-                topic = new Topic(name);
-                Topic existingTopic = this.nameToTopic.putIfAbsent(name, topic);
+                topic = new Topic(name); // Create new topic
+                Topic existingTopic = this.nameToTopic.putIfAbsent(name, topic); // Put if doesn't exist
                 if (existingTopic != null) {
-                    topic = existingTopic;
+                    topic = existingTopic; // If exist set to the existing one
                 }
             }
             return topic;

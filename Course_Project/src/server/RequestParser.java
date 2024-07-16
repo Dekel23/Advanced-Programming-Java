@@ -16,66 +16,69 @@ public class RequestParser {
         if (line == null || line.isEmpty())
             throw new IllegalArgumentException("Request is empty");
         
-        String[] parts = line.split(" ");
+        String[] parts = line.split(" "); // Split first line to httpCommand, URI and version
         if (parts.length != 3)
             throw new IllegalArgumentException("Invalid HTTP request line: " + line);
 
         String httpMethod = parts[0];
         String httpURI = parts[1];
         
-        if (!isValidHttpCommand(httpMethod))
+         // Check if http is a handled http command
+        if (!(httpMethod.equals("GET") || httpMethod.equals("POST") || httpMethod.equals("DELETE")))
             throw new IllegalArgumentException("Invalid HTTP command: " + httpMethod);
 
         String[] uriSegments;
-        Map<String, String> parameters = new HashMap<>();
-        int questionMarkIndex = httpURI.indexOf('?');
+        Map<String, String> parameters = new HashMap<>(); // Hash map for parameters values
+        int questionMarkIndex = httpURI.indexOf('?'); // Find URI "?" index
         if (questionMarkIndex != -1){
-            uriSegments = httpURI.substring(1, questionMarkIndex).split("/");
+            uriSegments = httpURI.substring(1, questionMarkIndex).split("/"); // Split segments by "/"
             String paramString = httpURI.substring(questionMarkIndex + 1);
-            String[] paramPairs = paramString.split("&");
+            String[] paramPairs = paramString.split("&"); // Split parameters by "&"
             for (String pair: paramPairs){
-                String[] keyValue = pair.split("=");
+                String[] keyValue = pair.split("="); // App parameter and value to map
                 if (keyValue.length != 2)
                     throw new IllegalArgumentException("Invalid HTTP parameter" + pair);
                 parameters.put(keyValue[0], keyValue[1]);
             }
         }
         else{
-            uriSegments = httpURI.substring(1).split("/");
+            uriSegments = httpURI.substring(1).split("/"); // If no "?" then split segments by "/"
         }
         
+        // Continue until header ends
         while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty()) {}
-        while (reader.ready() && (line = reader.readLine()) != null && !line.contains("------")) {}
+        // Continue until lines with "-----" ends
+        while (reader.ready() && (line = reader.readLine()) != null && !line.contains("------")) {} 
 
+        // While there are more lines and new line has "="
         while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty() && line.contains("=")) {
-            if (line.contains(" filename=")) {
+            if (line.contains(" filename=")) { // If there is parameter filename
                 String[] params = line.split(" "); 
-                line = line.split(" ")[params.length - 1];
+                line = line.split(" ")[params.length - 1]; // Set line to the last part
             }
                 
-            String[] keyValue = line.split("=");
+            String[] keyValue = line.split("="); // Split the line by "="
             if (keyValue.length != 2)
                 throw new IllegalArgumentException("Invalid HTTP parameter" + line);
-            parameters.put(keyValue[0], keyValue[1].substring(1, keyValue[1].length() - 1));
+            parameters.put(keyValue[0], keyValue[1].substring(1, keyValue[1].length() - 1)); // Add parameter to map
         }
 
+        // Continue until content part
         while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty()) {}
 
+        // Read until finished or line with "------"
         StringBuilder bodyBuilder = new StringBuilder();
         while (reader.ready() && (line = reader.readLine()) != null && !line.isEmpty() && !line.contains("------")) {
             bodyBuilder.append(line + "\n");
         }
 
+        // Convert content to byte array
         byte[] content = bodyBuilder.toString().getBytes();
 
         return new RequestInfo(httpMethod, httpURI, uriSegments, parameters, content);
     }
 
-    private static boolean isValidHttpCommand(String command) {
-        return command.equals("GET") || command.equals("POST") || command.equals("DELETE");
-    }
-	
-	// RequestInfo given internal class
+    // RequestInfo given internal class
     public static class RequestInfo {
         private final String httpCommand;
         private final String uri;

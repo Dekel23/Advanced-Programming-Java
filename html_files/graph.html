@@ -59,7 +59,7 @@
                 .data(data.nodes)
                 .join("circle")
                 .attr("r", 20)
-                .attr("fill", "#69b3a2");
+                .attr("fill", d => d.color || "#69b3a2");  // Use the color from the node data, or default to "#69b3a2"
 
             const nodeLabel = svg.append("g")
                 .selectAll("text")
@@ -114,10 +114,10 @@
 
         window.addEventListener('resize', function () {
             document.getElementById('graph').innerHTML = '';
-            createGraph([{ id: 'TA', message: '3'},{ id: 'APlus0'},{ id: 'TB', message: '3'},{ id: 'TC', message: '3.0'},{ id: 'AInc0'},{ id: 'TD', message: '4.0'}], [{ source: 'TA', target: 'APlus0' },{ source: 'APlus0', target: 'TC' },{ source: 'TB', target: 'APlus0' },{ source: 'TC', target: 'AInc0' },{ source: 'AInc0', target: 'TD' }]);
+            createGraph([{ id: 'A', message: '4', color: 'blue'},{ id: 'Plus', message: '', color: 'red'},{ id: 'B', message: '-1', color: 'blue'},{ id: 'C', message: '3.0', color: 'blue'},{ id: 'Inc', message: '', color: 'red'},{ id: 'D', message: '4.0', color: 'blue'}], [{ source: 'A', target: 'Plus' },{ source: 'Plus', target: 'C' },{ source: 'B', target: 'Plus' },{ source: 'C', target: 'Inc' },{ source: 'Inc', target: 'D' }]);
         });
 
-        createGraph([{ id: 'TA', message: '3'},{ id: 'APlus0'},{ id: 'TB', message: '3'},{ id: 'TC', message: '3.0'},{ id: 'AInc0'},{ id: 'TD', message: '4.0'}], [{ source: 'TA', target: 'APlus0' },{ source: 'APlus0', target: 'TC' },{ source: 'TB', target: 'APlus0' },{ source: 'TC', target: 'AInc0' },{ source: 'AInc0', target: 'TD' }]);
+        createGraph([{ id: 'A', message: '4', color: 'blue'},{ id: 'Plus', message: '', color: 'red'},{ id: 'B', message: '-1', color: 'blue'},{ id: 'C', message: '3.0', color: 'blue'},{ id: 'Inc', message: '', color: 'red'},{ id: 'D', message: '4.0', color: 'blue'}], [{ source: 'A', target: 'Plus' },{ source: 'Plus', target: 'C' },{ source: 'B', target: 'Plus' },{ source: 'C', target: 'Inc' },{ source: 'Inc', target: 'D' }]);
     </script> 
 </body>
 

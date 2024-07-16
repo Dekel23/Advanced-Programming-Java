@@ -59,7 +59,7 @@
                 .data(data.nodes)
                 .join("circle")
                 .attr("r", 20)
-                .attr("fill", "#69b3a2");
+                .attr("fill", d => d.color || "#69b3a2");  // Use the color from the node data, or default to "#69b3a2"
 
             const nodeLabel = svg.append("g")
                 .selectAll("text")
