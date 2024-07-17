@@ -2,6 +2,8 @@ package server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +40,9 @@ public class RequestParser {
                 String[] keyValue = pair.split("="); // App parameter and value to map
                 if (keyValue.length != 2)
                     throw new IllegalArgumentException("Invalid HTTP parameter" + pair);
-                parameters.put(keyValue[0], keyValue[1]);
+                String key = URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8);
+                String value = URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
+                parameters.put(key, value);
             }
         }
         else{

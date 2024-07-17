@@ -8,6 +8,7 @@ import java.util.List;
 
 import graph.Agent;
 import graph.ParallelAgent;
+import graph.TopicManagerSingleton;
 
 public class GenericConfig implements Config {
 
@@ -17,11 +18,15 @@ public class GenericConfig implements Config {
 
     public GenericConfig(){
         agents = new ArrayList<>();
+        this.file = "";
     }
 
     // Set config file to read from
     public void setConfFile(String file){
-        this.file = file;
+        if (!this.file.equals(file)) {
+            this.file = file;
+            this.close();
+        }
     }
 
     // Create system agents and topics from file
@@ -74,6 +79,7 @@ public class GenericConfig implements Config {
         for (Agent a: this.agents) { // Close all agents in List
             a.close();
         }
+        TopicManagerSingleton.get().clear();
     }
 
     @Override
