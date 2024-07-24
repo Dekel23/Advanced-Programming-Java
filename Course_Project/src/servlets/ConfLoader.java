@@ -31,7 +31,6 @@ public class ConfLoader implements Servlet {
     public void createTable() {
         StringBuilder html = new StringBuilder();
         html.append("<html>\n\t<body>\n");
-        html.append("\t\t<h1>Topic Information</h1>\n");
         html.append("\t\t<table border='1'>\n\t\t\t<tr><th>Topic</th><th>Message</th></tr>\n");
 
         for (Topic topic : TopicManagerSingleton.get().getTopics()) {
