@@ -10,12 +10,12 @@ import graph.Graph;
 import graph.Node;
 
 public class HtmlGraphWriter {
-    public static List<String> getGraphHTML(Graph graph) {
+    public static List<String> getGraphHTML(Graph graph, String pathTemplate) {
         List<String> htmlContent = new ArrayList<>();
         
         try {
             // Read the static HTML template
-            String template = new String(Files.readAllBytes(Paths.get("../html_files/graphTemplate.html")));
+            String template = new String(Files.readAllBytes(Paths.get(pathTemplate)));
             
             // Generate nodes and edges representation
             StringBuilder nodesBuilder = new StringBuilder();

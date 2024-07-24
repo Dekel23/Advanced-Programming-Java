@@ -59,7 +59,7 @@ public class IndexAgent implements Agent {
 
         System.out.println("Agent: " + this.name + " Changed to: " + this.list + " "+ this.idx);
         
-        if (this.idx != -1 && this.output != null) // Update subscriber
+        if (this.output != null) // Update subscriber
             try {
                 TopicManagerSingleton.get().getTopic(this.output).publish(new Message(this.list[this.idx]));
             } catch (Exception e) {

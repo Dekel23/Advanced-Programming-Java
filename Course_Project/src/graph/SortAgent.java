@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class SortAgent implements Agent {
 
@@ -39,8 +40,21 @@ public class SortAgent implements Agent {
     public void callback(String topic, Message msg) {
         if (topic.equals(this.input)) { // If topic is first publisher
             this.list = msg.asText.split(","); // Update value
-            Arrays.sort(this.list);
-            System.out.println("Agent: " + this.name + " Changed to: " + this.list);
+            for (String str: this.list){
+                try {
+                    double num = Double.parseDouble(str);
+                    if (Double.isNaN(num))
+                        return;
+                } catch (NumberFormatException e) {
+                    return;
+                }
+            }
+            Arrays.sort(this.list, new Comparator<String>() { // Sort Array
+                public int compare(String s1, String s2) {
+                    return Double.compare(Double.parseDouble(s1), Double.parseDouble(s2));
+                }
+            });
+            System.out.println("Agent: " + this.name + " Changed to: " + Arrays.toString(this.list));
             if (this.output != null) // Update subscriber
                 TopicManagerSingleton.get().getTopic(this.output).publish(new Message(String.join(",", this.list)));
         }

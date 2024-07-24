@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Map;
 import server.RequestParser.RequestInfo;
 import views.HtmlGraphWriter;
@@ -16,12 +14,16 @@ import graph.TopicManagerSingleton;
 
 public class ConfLoader implements Servlet {
 
-    private final String graphPath = "../html_files/graph.html";
-    private final String tablePath = "../html_files/table.html";
+    private final String directory;
+    private final String graphPath;
+    private final String tablePath;
     private GenericConfig config;
 
-    public ConfLoader() {
+    public ConfLoader(String htmlDirectory) {
         this.config = new GenericConfig();
+        this.directory = htmlDirectory;
+        this.graphPath = htmlDirectory + "/graph.html";
+        this.tablePath = htmlDirectory + "/table.html";
     }
 
     public void createTable() {
@@ -60,9 +62,11 @@ public class ConfLoader implements Servlet {
         // Create Graph instance
         Graph graph = new Graph();
         graph.createFromTopics();
-
+        if (graph.hasCycles()){
+            return;
+        }
         // Generate HTML representation of the graph
-        String graphHtml = String.join("\n", HtmlGraphWriter.getGraphHTML(graph));
+        String graphHtml = String.join("\n", HtmlGraphWriter.getGraphHTML(graph, this.directory + "/graphTemplate.html"));
 
         // Remove existing content
         File file = new File(this.graphPath);
@@ -93,8 +97,6 @@ public class ConfLoader implements Servlet {
         byte[] fileContent = ri.getContent();
 
         if (fileName != null && fileContent != null && fileContent.length > 0) {
-            // Save the file content
-            Files.write(Paths.get(fileName), fileContent);
 
             // Load GenericConfig
             config.setConfFile(fileName);
