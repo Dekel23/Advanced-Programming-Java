@@ -114,10 +114,10 @@
 
         window.addEventListener('resize', function () {
             document.getElementById('graph').innerHTML = '';
-            createGraph([{ id: 'A', message: '2,4,3', color: 'blue'},{ id: 'Sort', message: '', color: 'red'},{ id: 'B', message: '2,3,4', color: 'blue'},{ id: 'Index', message: '', color: 'red'},{ id: 'C', message: '', color: 'blue'},{ id: 'D', message: 'error', color: 'blue'}], [{ source: 'A', target: 'Sort' },{ source: 'Sort', target: 'B' },{ source: 'B', target: 'Index' },{ source: 'Index', target: 'D' },{ source: 'C', target: 'Index' }]);
+            createGraph([{ id: 'A', message: '23.4,5.5,-3,7,11', color: 'blue'},{ id: 'Sort', message: '', color: 'red'},{ id: 'B', message: '-3,5.5,7,11,23.4', color: 'blue'},{ id: 'Index', message: '', color: 'red'},{ id: 'C', message: '3', color: 'blue'},{ id: 'D', message: '11', color: 'blue'}], [{ source: 'A', target: 'Sort' },{ source: 'Sort', target: 'B' },{ source: 'B', target: 'Index' },{ source: 'Index', target: 'D' },{ source: 'C', target: 'Index' }]);
         });
 
-        createGraph([{ id: 'A', message: '2,4,3', color: 'blue'},{ id: 'Sort', message: '', color: 'red'},{ id: 'B', message: '2,3,4', color: 'blue'},{ id: 'Index', message: '', color: 'red'},{ id: 'C', message: '', color: 'blue'},{ id: 'D', message: 'error', color: 'blue'}], [{ source: 'A', target: 'Sort' },{ source: 'Sort', target: 'B' },{ source: 'B', target: 'Index' },{ source: 'Index', target: 'D' },{ source: 'C', target: 'Index' }]);
+        createGraph([{ id: 'A', message: '23.4,5.5,-3,7,11', color: 'blue'},{ id: 'Sort', message: '', color: 'red'},{ id: 'B', message: '-3,5.5,7,11,23.4', color: 'blue'},{ id: 'Index', message: '', color: 'red'},{ id: 'C', message: '3', color: 'blue'},{ id: 'D', message: '11', color: 'blue'}], [{ source: 'A', target: 'Sort' },{ source: 'Sort', target: 'B' },{ source: 'B', target: 'Index' },{ source: 'Index', target: 'D' },{ source: 'C', target: 'Index' }]);
     </script> 
 </body>
 

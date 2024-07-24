@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import server.RequestParser.RequestInfo;
 import views.HtmlGraphWriter;
 import configs.GenericConfig;
@@ -97,6 +99,7 @@ public class ConfLoader implements Servlet {
         byte[] fileContent = ri.getContent();
 
         if (fileName != null && fileContent != null && fileContent.length > 0) {
+            Files.write(Paths.get(fileName), fileContent);
 
             // Load GenericConfig
             config.setConfFile(fileName);
