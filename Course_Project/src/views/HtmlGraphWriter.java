@@ -9,7 +9,33 @@ import java.io.IOException;
 import graph.Graph;
 import graph.Node;
 
+/**
+ * A utility class for generating HTML representations of graphs.
+ * <p>
+ * This class reads an HTML template and replaces placeholders with graph data
+ * to create a visual representation of the graph.
+ * </p>
+ */
 public class HtmlGraphWriter {
+
+    /**
+     * Constructs an {@code HtmlGraphWriter} instance.
+     * <p>
+     * This default constructor is provided to allow instantiation of the class.
+     * </p>
+     */
+    public HtmlGraphWriter() {
+        // Default constructor
+    }
+
+    /**
+     * Generates the HTML content for visualizing a graph based on the provided
+     * graph and HTML template.
+     *
+     * @param graph the {@link Graph} to be visualized
+     * @param pathTemplate the path to the HTML template file
+     * @return a {@link List} of strings representing the HTML content for the graph
+     */
     public static List<String> getGraphHTML(Graph graph, String pathTemplate) {
         List<String> htmlContent = new ArrayList<>();
         
@@ -44,7 +70,7 @@ public class HtmlGraphWriter {
             // Change strings format
             String graphData = String.format("createGraph([%s], [%s]);", nodesBuilder.toString(), edgesBuilder.toString());
             
-             // Change template to current graph
+            // Change template to current graph
             String filledTemplate = template.replace("// createGraph({{NODES}}, {{EDGES}});", graphData);
 
             // Split content to lines

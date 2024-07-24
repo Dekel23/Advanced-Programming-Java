@@ -10,18 +10,29 @@ import graph.Agent;
 import graph.ParallelAgent;
 import graph.TopicManagerSingleton;
 
+/**
+ * A generic configuration class for setting up agents and topics from a configuration file.
+ * It reads agent configurations from a file, creates agents, and manages them.
+ */
 public class GenericConfig implements Config {
 
     private List<Agent> agents;
     private final int capacity = 50;
     private String file;
 
+    /**
+     * Constructs a GenericConfig instance, initializing the list of agents and setting the configuration file to an empty string.
+     */
     public GenericConfig(){
         agents = new ArrayList<>();
         this.file = "";
     }
 
-    // Set config file to read from
+    /**
+     * Sets the configuration file to read from. If the file is different from the current one, it updates the file and closes the existing configuration.
+     *
+     * @param file the path to the configuration file
+     */
     public void setConfFile(String file){
         if (!this.file.equals(file)) {
             this.file = file;
@@ -29,7 +40,10 @@ public class GenericConfig implements Config {
         }
     }
 
-    // Create system agents and topics from file
+    /**
+     * Reads the configuration file, creates agents based on the file contents, and adds them to the list.
+     * The file should contain agent class names followed by their subscriber and publisher lists in a specific format.
+     */
     @Override
     public void create() {
         List<String> lines;
@@ -41,7 +55,7 @@ public class GenericConfig implements Config {
             return;
         }
 
-        if (lines.size() % 3 != 0){ // If not multyple of 3
+        if (lines.size() % 3 != 0){ // If not a multiple of 3
             System.out.println("Invalid number of lines in file " + this.file);
             return;
         }
@@ -55,26 +69,29 @@ public class GenericConfig implements Config {
                 try {
                     Constructor<?> constructor = agentClass.getConstructor(subs.getClass(), pubs.getClass());
                     Agent agent = (Agent) constructor.newInstance(subs, pubs);
-                    Agent parallelAgent = new ParallelAgent(agent, capacity); // Create parallelAgent from agent
+                    Agent parallelAgent = new ParallelAgent(agent, capacity); // Create ParallelAgent from agent
 
                     if (this.agents.stream().noneMatch(parallelAgent::equals)) { // Add if not in list
                         agents.add(parallelAgent);
                     } else {
-                        parallelAgent.close(); // If exist close the new one
+                        parallelAgent.close(); // If exists, close the new one
                         agent = null;
                         parallelAgent = null;
                     }
                 } catch (Exception e) {
-                    System.out.println("Cant make constructor for line " + (i+1) + ": " + lines.get(i) + " in file" + this.file);
+                    System.out.println("Can't create constructor for line " + (i+1) + ": " + lines.get(i) + " in file " + this.file);
                     return;
                 }
             } catch (ClassNotFoundException e) {
-                System.out.println("No class match to line " + (i+1) + ": " + lines.get(i) + " in file" + this.file);
+                System.out.println("No class matches line " + (i+1) + ": " + lines.get(i) + " in file " + this.file);
                 return;
             }
         }
     }
 
+    /**
+     * Closes all agents and clears all topics from the TopicManagerSingleton.
+     */
     public void close() {
         for (Agent a: this.agents) { // Close all agents in List
             a.close();
@@ -82,15 +99,23 @@ public class GenericConfig implements Config {
         TopicManagerSingleton.get().clear();
     }
 
+    /**
+     * Gets the name of this configuration.
+     *
+     * @return the name of the configuration
+     */
     @Override
     public String getName() {
         return "GenericConfig";
     }
 
-
+    /**
+     * Gets the version of this configuration.
+     *
+     * @return the version number
+     */
     @Override
     public int getVersion() {
         return 1;
     }
-    
 }

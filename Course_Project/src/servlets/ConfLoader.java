@@ -4,16 +4,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import server.RequestParser.RequestInfo;
-import views.HtmlGraphWriter;
-import configs.GenericConfig;
+import java.util.Map;
 import graph.Graph;
 import graph.Topic;
 import graph.TopicManagerSingleton;
+import configs.GenericConfig;
+import views.HtmlGraphWriter;
+import server.RequestParser.RequestInfo;
 
+/**
+ * Handles HTTP requests for loading configuration files and generating corresponding HTML representations.
+ * It creates tables and graphs based on the topics and agents defined in the configuration.
+ */
 public class ConfLoader implements Servlet {
 
     private final String directory;
@@ -21,6 +25,11 @@ public class ConfLoader implements Servlet {
     private final String tablePath;
     private GenericConfig config;
 
+    /**
+     * Constructs a ConfLoader instance with the specified directory for HTML files.
+     *
+     * @param htmlDirectory the directory where HTML files will be saved
+     */
     public ConfLoader(String htmlDirectory) {
         this.config = new GenericConfig();
         this.directory = htmlDirectory;
@@ -28,6 +37,10 @@ public class ConfLoader implements Servlet {
         this.tablePath = htmlDirectory + "/table.html";
     }
 
+    /**
+     * Creates an HTML table representing the current topics and their messages.
+     * The table is saved to the file specified by {@code tablePath}.
+     */
     public void createTable() {
         StringBuilder html = new StringBuilder();
         html.append("<html>\n\t<body>\n");
@@ -49,16 +62,18 @@ public class ConfLoader implements Servlet {
         }
 
         // Write new content
-        try {
-            FileWriter myWriter = new FileWriter(this.tablePath);
+        try (FileWriter myWriter = new FileWriter(this.tablePath)) {
             myWriter.write(htmlContent);
-            myWriter.close();
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * Creates an HTML graph representation of the current system state.
+     * The graph is saved to the file specified by {@code graphPath}.
+     */
     public void createGraph() {
         // Create Graph instance
         Graph graph = new Graph();
@@ -76,16 +91,21 @@ public class ConfLoader implements Servlet {
         }
 
         // Write new content
-        try {
-            FileWriter myWriter = new FileWriter(this.graphPath);
+        try (FileWriter myWriter = new FileWriter(this.graphPath)) {
             myWriter.write(graphHtml);
-            myWriter.close();
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
 
+    /**
+     * Handles HTTP POST requests to upload a configuration file, process it, and generate the graph and table HTML files.
+     *
+     * @param ri the request information containing parameters and content
+     * @param toClient the output stream to send the response to the client
+     * @throws IOException if an I/O error occurs while handling the request
+     */
     @Override
     public void handle(RequestInfo ri, OutputStream toClient) throws IOException {
         if (!"POST".equals(ri.getHttpCommand())) {
@@ -104,6 +124,9 @@ public class ConfLoader implements Servlet {
             config.setConfFile(fileName);
             config.create();
 
+            File file = new File(fileName);
+            file.delete();
+
             this.createGraph();
             this.createTable();
 
@@ -116,11 +139,23 @@ public class ConfLoader implements Servlet {
         }
     }
 
+    /**
+     * Sends an HTTP response to the client.
+     *
+     * @param toClient the output stream to send the response to
+     * @param response the HTTP response string
+     * @throws IOException if an I/O error occurs while sending the response
+     */
     private void sendResponse(OutputStream toClient, String response) throws IOException {
         toClient.write(response.getBytes());
         toClient.flush();
     }
 
+    /**
+     * Closes the configuration by closing all agents and deleting the HTML files.
+     *
+     * @throws IOException if an I/O error occurs while closing the configuration
+     */
     @Override
     public void close() throws IOException {
         config.close();

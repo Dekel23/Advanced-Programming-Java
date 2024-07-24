@@ -3,5 +3,6 @@
         "src"
     ],
     "java.project.outputPath": "bin",
-    "java.project.referencedLibraries": []
+    "java.project.referencedLibraries": [],
+    "docwriter.style": "Auto-detect"
 }

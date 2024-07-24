@@ -7,13 +7,29 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import server.RequestParser.RequestInfo;
 
+/**
+ * Handles HTTP GET requests for serving static HTML, CSS, and JavaScript files from a specified directory.
+ */
 public class HtmlLoader implements Servlet {
+
     private final String htmlDirectory;
 
+    /**
+     * Constructs an HtmlLoader instance with the specified directory for serving HTML files.
+     *
+     * @param htmlDirectory the directory where HTML files are stored
+     */
     public HtmlLoader(String htmlDirectory) {
         this.htmlDirectory = htmlDirectory;
     }
 
+    /**
+     * Handles HTTP GET requests to retrieve and serve static files.
+     *
+     * @param ri the request information containing URI segments
+     * @param toClient the output stream to send the response to the client
+     * @throws IOException if an I/O error occurs while handling the request
+     */
     @Override
     public void handle(RequestInfo ri, OutputStream toClient) throws IOException {
         if (!"GET".equals(ri.getHttpCommand())) {
@@ -47,6 +63,13 @@ public class HtmlLoader implements Servlet {
         }
     }
 
+    /**
+     * Sends an HTTP 404 error response when a requested file is not found.
+     *
+     * @param toClient the output stream to send the response to
+     * @param message the error message to include in the response body
+     * @throws IOException if an I/O error occurs while sending the response
+     */
     private void sendErrorResponse(OutputStream toClient, String message) throws IOException {
         String errorContent = "<html><body><h1>404 Not Found</h1><p>" + message + "</p></body></html>";
         String response = "HTTP/1.1 404 Not Found\r\n" +
@@ -57,11 +80,24 @@ public class HtmlLoader implements Servlet {
         sendResponse(toClient, response);
     }
 
+    /**
+     * Sends an HTTP response to the client.
+     *
+     * @param toClient the output stream to send the response to
+     * @param response the HTTP response string
+     * @throws IOException if an I/O error occurs while sending the response
+     */
     private void sendResponse(OutputStream toClient, String response) throws IOException {
         toClient.write(response.getBytes());
         toClient.flush();
     }
 
+    /**
+     * Determines the content type of a file based on its extension.
+     *
+     * @param fileName the name of the file
+     * @return the MIME type of the file
+     */
     private String getContentType(String fileName) {
         if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
             return "text/html";
@@ -74,6 +110,11 @@ public class HtmlLoader implements Servlet {
         }
     }
 
+    /**
+     * Closes any resources used by the HtmlLoader. This implementation does not require any resources to close.
+     *
+     * @throws IOException if an I/O error occurs while closing resources
+     */
     @Override
     public void close() throws IOException {
         // No resources to close

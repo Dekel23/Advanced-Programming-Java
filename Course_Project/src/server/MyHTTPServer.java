@@ -14,6 +14,11 @@ import java.util.concurrent.TimeUnit;
 import server.RequestParser.RequestInfo;
 import servlets.Servlet;
 
+/**
+ * An HTTP server implementation that handles incoming HTTP requests.
+ * The server supports handling multiple HTTP commands (GET, POST, DELETE) and 
+ * utilizes a thread pool to manage concurrent client connections.
+ */
 public class MyHTTPServer extends Thread implements HTTPServer {
     private final int port;
     private final int maxThreads;
@@ -24,15 +29,29 @@ public class MyHTTPServer extends Thread implements HTTPServer {
     private volatile boolean running = true;
     private ServerSocket serverSocket;
 
+    /**
+     * Constructs a new {@code MyHTTPServer} instance.
+     *
+     * @param port the port number on which the server will listen for incoming connections
+     * @param maxThreads the maximum number of threads to use for handling client requests
+     */
     public MyHTTPServer(int port, int maxThreads) {
         this.port = port;
         this.maxThreads = maxThreads;
         this.threadPool = Executors.newFixedThreadPool(this.maxThreads);
     }
 
+    /**
+     * Adds a servlet for a specific HTTP command and URI.
+     * The servlet will handle requests matching the specified command and URI.
+     *
+     * @param httpCommand the HTTP command (e.g., GET, POST, DELETE)
+     * @param uri the URI for which the servlet should handle requests
+     * @param s the {@link Servlet} to handle requests
+     */
     @Override
     public void addServlet(String httpCommand, String uri, Servlet s) {
-        switch (httpCommand) { // Add servlet to map by http command
+        switch (httpCommand) {
             case "GET":
                 getServlets.put(uri, s);
                 break;
@@ -47,9 +66,15 @@ public class MyHTTPServer extends Thread implements HTTPServer {
         }
     }
 
+    /**
+     * Removes a servlet for a specific HTTP command and URI.
+     *
+     * @param httpCommand the HTTP command (e.g., GET, POST, DELETE)
+     * @param uri the URI for which the servlet should be removed
+     */
     @Override
     public void removeServlet(String httpCommand, String uri) {
-        switch (httpCommand.toUpperCase()) { // Remove servlet from map by http command
+        switch (httpCommand.toUpperCase()) {
             case "GET":
                 getServlets.remove(uri);
                 break;
@@ -64,14 +89,22 @@ public class MyHTTPServer extends Thread implements HTTPServer {
         }
     }
 
+    /**
+     * Starts the server in a separate thread.
+     */
     @Override
     public void start() {
         super.start();
     }
 
+    /**
+     * Stops the server and cleans up resources.
+     *
+     * @throws IOException if an I/O error occurs while closing resources
+     */
     @Override
     public void close() throws IOException {
-        running = false; // Set running to false
+        running = false;
         // Close all servlets
         for (Servlet servlet: this.getServlets.values()){
             servlet.close();
@@ -97,14 +130,17 @@ public class MyHTTPServer extends Thread implements HTTPServer {
         }
     }
 
+    /**
+     * The main server loop that accepts client connections and handles them.
+     */
     @Override
     public void run() {
         try (ServerSocket server = new ServerSocket(port)) {
             serverSocket = server;
             while (running) {
                 try {
-                    Socket clientSocket = server.accept(); // Wait to accept client
-                    this.threadPool.submit(() -> handleClient(clientSocket)); // Add handle new client to thread pool 
+                    Socket clientSocket = server.accept();
+                    this.threadPool.submit(() -> handleClient(clientSocket));
                 } catch (IOException e) {
                     if (running) {
                         e.printStackTrace();
@@ -116,15 +152,21 @@ public class MyHTTPServer extends Thread implements HTTPServer {
         }
     }
 
+    /**
+     * Handles an individual client connection.
+     * Parses the HTTP request, finds the appropriate servlet, and handles the request.
+     *
+     * @param clientSocket the {@link Socket} representing the client connection
+     */
     private void handleClient(Socket clientSocket) {
         try (OutputStream out = clientSocket.getOutputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
             
-            RequestInfo requestInfo = RequestParser.parseRequest(in); // Parse http request
-            Servlet servlet = findServlet(requestInfo.getHttpCommand(), requestInfo.getUri()); // Find best servlet
+            RequestInfo requestInfo = RequestParser.parseRequest(in);
+            Servlet servlet = findServlet(requestInfo.getHttpCommand(), requestInfo.getUri());
             
             if (servlet != null) {
-                servlet.handle(requestInfo, out); // Let servlet handle request
+                servlet.handle(requestInfo, out);
             } else {
                 String response = "HTTP/1.1 404 Not Found\r\n\r\n";
                 out.write(response.getBytes());
@@ -134,8 +176,16 @@ public class MyHTTPServer extends Thread implements HTTPServer {
         }
     }
 
+    /**
+     * Finds the most appropriate servlet for the given HTTP command and URI.
+     * The servlet is selected based on the longest matching URI.
+     *
+     * @param httpCommand the HTTP command (e.g., GET, POST, DELETE)
+     * @param uri the URI of the request
+     * @return the {@link Servlet} that matches the request, or {@code null} if no matching servlet is found
+     */
     private Servlet findServlet(String httpCommand, String uri) {
-        ConcurrentHashMap<String, Servlet> servletMap; // Set map by http command
+        ConcurrentHashMap<String, Servlet> servletMap;
         switch (httpCommand.toUpperCase()) {
             case "GET":
                 servletMap = getServlets;
@@ -150,7 +200,6 @@ public class MyHTTPServer extends Thread implements HTTPServer {
                 return null;
         }
 
-        // Find servlet in map that best match the uri
         String longestMatch = "";
         Servlet matchedServlet = null;
         for (String key : servletMap.keySet()) {
