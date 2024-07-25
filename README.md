@@ -47,7 +47,7 @@ javac --enable-preview --release 22 -d bin -cp src "src\*.java"
 java --enable-preview -XX:+ShowCodeDetailsInExceptionMessages -cp "bin" Main
 ```
 Now as the client, go to your browser and search for: http://localhost:8080/app/index.html \
-Upload any configuration file that follows the rules specified in the file [config_files/README.md](https://github.com/Dekel23/Advanced-Programming-Java/blob/main/config_files/README.md)\
+Upload any configuration file that follows the rules specified in the file [config_files/README.md](https://html-preview.github.io/?url=https://github.com/Dekel23/Advanced-Programming-Java/blob/main/config_files/README.md)\
 Change content in any topic desired to visualize the effects
 
 ## API Reference
