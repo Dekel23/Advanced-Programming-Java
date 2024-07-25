@@ -54,3 +54,5 @@ Change content in any topic desired to visualize the effects
 
 See API documentation in [Course_Project/docs/index.html](https://html-preview.github.io/?url=https://github.com/Dekel23/Advanced-Programming-Java/blob/main/Course_Project/docs/index.html)
 
+[Watch project video](project_video.mp4)
+
