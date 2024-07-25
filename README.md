@@ -1,7 +1,7 @@
 
 # GRAPHGENIE
 
-In this project, we created a server that the user can connect through the browser and visualize a computational graph created from a selected configuration, and see the flow of inforamation in the graph.
+In this project, we created a server that the user can connect to through the browser, visualize a computational graph created from a selected configuration, and see the flow of information in the graph.
 
 ## Authors
 
@@ -25,14 +25,14 @@ java --version
 If needed install JDK 22 using the following link:\
 https://www.oracle.com/il-en/java/technologies/downloads/
 
-Make sure you added java JDK 22 to PATH
+Make sure you added Java JDK 22 to PATH
 ## Running
-The reposetory consisnt of 3 folders:
-- Course_Project: Backend java code for server side
-- html_files: Static and generated HTML files for client side
+The repository consists of 3 folders:
+- Course_Project: Backend Java code for server-side
+- html_files: Static and generated HTML files for client-side
 - config_files: Example configuration files to use
 
-### To compile and run follow this steps:
+### To compile and run follow these steps:
 
 1. Go to the java directory:
 ```bash
