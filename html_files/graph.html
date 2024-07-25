@@ -114,10 +114,10 @@
 
         window.addEventListener('resize', function () {
             document.getElementById('graph').innerHTML = '';
-            createGraph([{ id: 'A', message: '', color: 'blue'},{ id: 'B', message: '', color: 'blue'},{ id: 'C', message: '', color: 'blue'},{ id: 'D', message: '', color: 'blue'}], []);
+            createGraph([{ id: 'A', message: '3', color: 'blue'},{ id: 'Plus', message: '', color: 'red'},{ id: 'B', message: '1', color: 'blue'},{ id: 'C', message: '4.0', color: 'blue'},{ id: 'Inc', message: '', color: 'red'},{ id: 'D', message: '5.0', color: 'blue'}], [{ source: 'A', target: 'Plus' },{ source: 'Plus', target: 'C' },{ source: 'B', target: 'Plus' },{ source: 'C', target: 'Inc' },{ source: 'Inc', target: 'D' }]);
         });
 
-        createGraph([{ id: 'A', message: '', color: 'blue'},{ id: 'B', message: '', color: 'blue'},{ id: 'C', message: '', color: 'blue'},{ id: 'D', message: '', color: 'blue'}], []);
+        createGraph([{ id: 'A', message: '3', color: 'blue'},{ id: 'Plus', message: '', color: 'red'},{ id: 'B', message: '1', color: 'blue'},{ id: 'C', message: '4.0', color: 'blue'},{ id: 'Inc', message: '', color: 'red'},{ id: 'D', message: '5.0', color: 'blue'}], [{ source: 'A', target: 'Plus' },{ source: 'Plus', target: 'C' },{ source: 'B', target: 'Plus' },{ source: 'C', target: 'Inc' },{ source: 'Inc', target: 'D' }]);
     </script> 
 </body>
 
