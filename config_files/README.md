@@ -12,3 +12,5 @@ Adding an agent requires following these rules:
 
 Topic will be separated by comma ```,```\
 Avoid using spaces and empty lines as the file will not interpreted
+
+See more examples in this folder
